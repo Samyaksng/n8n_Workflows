@@ -1,0 +1,533 @@
+{
+  "name": "Reddit_Workflow_C",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6c157522-e269-4a98-a733-a1b868196bef",
+      "name": "When chat message received",
+      "webhookId": "1051ae95-9d19-45e5-8f08-ac16365daac2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Create the table if it does not exist\nCREATE TABLE IF NOT EXISTS Reddit_data2 (\n    pid VARCHAR(255) PRIMARY KEY,\n    title VARCHAR(255) NOT NULL,\n    url VARCHAR(255) NOT NULL,\n    subreddit VARCHAR(255) NOT NULL\n);\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        220,
+        -120
+      ],
+      "id": "a02ec717-383f-4d3c-84ad-e179ba35ef70",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "QFvvf3ESBNXqkG6J",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "location": "allReddit",
+        "keyword": "={{ $json.chatInput }}",
+        "limit": 1,
+        "additionalFields": {
+          "sort": "relevance"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        420,
+        0
+      ],
+      "id": "38f145c9-af45-4b3f-ae03-51ff6564de3b",
+      "name": "Reddit",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "czh06gmXEpV0GFzP",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit_data2",
+          "mode": "list",
+          "cachedResultName": "reddit_data2"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        740,
+        -160
+      ],
+      "id": "31daa829-a419-4634-b034-546b0487651b",
+      "name": "Postgres1",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "QFvvf3ESBNXqkG6J",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit_data2",
+          "mode": "list",
+          "cachedResultName": "reddit_data2"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pid": "={{ $('Reddit').item.json.id }}",
+            "url": "={{ $('Reddit').item.json.url }}",
+            "title": "={{ $('Reddit').item.json.title }}",
+            "subreddit": "={{ $json.subreddit }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pid",
+              "displayName": "pid",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subreddit",
+              "displayName": "subreddit",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1360,
+        20
+      ],
+      "id": "b70d632b-83aa-4160-83ab-8a2b822d2656",
+      "name": "Postgres2",
+      "credentials": {
+        "postgres": {
+          "id": "QFvvf3ESBNXqkG6J",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f272d16-04c8-42fd-93d5-c55c2687c0a7",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "b8d94cc8-92d5-4a4e-b4fb-6dbd576c03a6",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "95910c62-c43e-41b3-9bb4-b3c69c5b681c",
+              "name": "pid",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "8343e44e-96b7-4be0-8841-5b78fc896fba",
+              "name": "subreddit",
+              "value": "={{ $json.subreddit }}",
+              "type": "string"
+            },
+            {
+              "id": "69177bf9-edc1-49c2-8afd-23276f9fcaf2",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        80
+      ],
+      "id": "4f3e5275-d93f-457b-bdd8-4ac24022dbd1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "url",
+              "field2": "url"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        1040,
+        -20
+      ],
+      "id": "443d3222-8a3a-4a73-88e1-0521aa5491f6",
+      "name": "Compare Datasets"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Imagine you are a friendly and understanding chatbot. Respond to the following comment in a human-like tone:\nTitle:{{ $('Compare Datasets').item.json.title }}\nContext:{{ $('Compare Datasets').item.json.selftext }}\ncomment : {{ $json.body }}\n\nI have share context the reply t that context.\nnow structure the output and share the reply to particular comment. Just give reply nothing else."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1800,
+        20
+      ],
+      "id": "851d4988-363b-48f0-bc9f-d63d302945d0",
+      "name": "OpenAI",
+      "alwaysOutputData": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "uTggs91LdQwcwr7r",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "postComment",
+        "operation": "getAll",
+        "subreddit": "={{ $json.subreddit }}",
+        "postId": "={{ $json.pid }}",
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        20
+      ],
+      "id": "a8571675-3a6f-4d66-965e-4f272b663669",
+      "name": "Reddit_Comments",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "czh06gmXEpV0GFzP",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9f03de6-dff5-41fc-8bfd-b8ff5b5855c6",
+              "name": "message.content",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2160,
+        20
+      ],
+      "id": "b7d3f0ce-31fe-4deb-ba76-1fe790b039d5",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "### Reddit Comment Reply Agent",
+        "height": 80,
+        "width": 260,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        260
+      ],
+      "typeVersion": 1,
+      "id": "99af1abf-a425-420b-8ff9-1a0986c75178",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "function getNonDuplicatedObjects(arr, dbUrls) {\n    const counts = {};\n\n    // Count occurrences of each URL in the input array\n    arr.forEach(item => {\n        const url = item.json.url; // Assuming 'url' is the unique identifier\n        counts[url] = (counts[url] || 0) + 1; // Increment count for this URL\n    });\n\n    // Filter the input array to return only unique URLs that are not in the database\n    return arr.filter(item => {\n        const url = item.json.url; // Get the URL for the current item\n        return counts[url] === 1 ; // Check if it's unique and not in the database\n    });\n}\n\n// Example usage\nconst previous = $input.all(); // Assuming this gets all items from Reddit search\n\n\n// Call the function and return the result\nreturn getNonDuplicatedObjects(previous);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        -400
+      ],
+      "id": "4e34fa5c-14b7-44ed-8710-6211bfabf13f",
+      "name": "Code",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1420,
+        -240
+      ],
+      "id": "f77d8042-06b2-4db7-8a0e-b4dd4e358ff9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "uTggs91LdQwcwr7r",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1480,
+        -400
+      ],
+      "id": "ce9d1427-ed55-4b92-bf97-bf8171934f7e",
+      "name": "AI Agent",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Reddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit": {
+      "main": [
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Compare Datasets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Compare Datasets": {
+      "main": [
+        [],
+        [],
+        [],
+        [
+          {
+            "node": "Postgres2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres2": {
+      "main": [
+        [
+          {
+            "node": "Reddit_Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit_Comments": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "147af11c-9a1e-4a53-954f-81c1275dbe5f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f4192df241493d2d7d3f0fc20f02452ba7aafdbe38e0242dd261f6fc0f587360"
+  },
+  "id": "y108YDgDGw6y8CPs",
+  "tags": []
+}
