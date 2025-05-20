@@ -1,4 +1,5 @@
 # 🤖 Chatbot with Retrieval-Augmented Generation (RAG)
+---
 
 This project provides a comprehensive solution for creating an automated document ingestion and Retrieval-Augmented Generation (RAG) chatbot. By leveraging a no-code/low-code workflow built in n8n, users can efficiently scrape content-rich websites, process the extracted data, and deploy a semantic chatbot powered by OpenAI and LangChain.
 ---
