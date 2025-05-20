@@ -1,8 +1,6 @@
 # 🤖 Chatbot with Retrieval-Augmented Generation (RAG)
----
 
-This project provides a comprehensive solution for creating an automated document ingestion and Retrieval-Augmented Generation (RAG) chatbot. By leveraging a no-code/low-code workflow built in n8n, users can efficiently scrape content-rich websites, process the extracted data, and deploy a semantic chatbot powered by OpenAI and LangChain.
----
+This project offers a complete solution for developing an automated document ingestion and Retrieval-Augmented Generation (RAG) chatbot. By utilizing a no-code/low-code workflow created in n8n, users can effectively scrape content-rich websites, process the gathered data, and launch a semantic chatbot powered by OpenAI and LangChain.
 
 ## 📌 Features
 
@@ -65,6 +63,7 @@ docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n
 Access the editor at http://localhost:5678
 
 Import the .json file workflow in n8n 
+
 ---
 
 
